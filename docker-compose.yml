@@ -1,0 +1,57 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=db;Port=3306;Database=mymoney;User=mymoney_user;Password=mymoney_user;
+    entrypoint: ["dotnet", "MyMoney.dll"]
+    depends_on:
+      - db
+    networks:
+      - backend_network
+
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mymoney
+      MYSQL_USER: mymoney_user
+      MYSQL_PASSWORD: mymoney_user
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ppassword"]
+      interval: 10s
+      retries: 5
+    networks:
+      - backend_network
+
+  migrations:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migrations 
+    entrypoint: ["dotnet", "ef", "database", "update"]
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=db;Port=3306;Database=mymoney;User=root;Password=password;
+    depends_on:
+      - db
+    networks:
+      - backend_network
+    restart: "no"
+
+networks:
+  backend_network:
+    driver: bridge
+
+volumes:
+  db_data:

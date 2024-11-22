@@ -4,7 +4,7 @@ using MyMoney.Models;
 
 namespace MyMoney.Services;
 
-public class ExpensesService
+public class ExpensesService : IExpensesService
 {
     private readonly ApplicationDbContext _context;
 

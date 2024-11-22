@@ -4,9 +4,9 @@ EXPOSE 80/tcp
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["MyMoney.csproj", "./"]
+COPY ["MyMoney/MyMoney.csproj", "./"]
 RUN dotnet restore "MyMoney.csproj"
-COPY . .
+COPY MyMoney/. .
 WORKDIR "/src/."
 RUN dotnet build "MyMoney.csproj" -c Release -o /app/build
 

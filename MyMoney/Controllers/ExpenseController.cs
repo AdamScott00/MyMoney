@@ -9,9 +9,9 @@ namespace MyMoney.Controllers;
 [Route("api/[controller]")]
 public class ExpenseController : ControllerBase
 {
-    private readonly ExpensesService _expensesService;
+    private readonly IExpensesService _expensesService;
 
-    public ExpenseController(ExpensesService expensesService)
+    public ExpenseController(IExpensesService expensesService)
     {
         _expensesService = expensesService;
     }
